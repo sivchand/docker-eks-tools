@@ -2,10 +2,10 @@ FROM python:3.8
 
 ARG TARGETARCH
 
-ARG KUBECTL_VER=1.23.1
-ARG EKSCTL_VER=0.94.0
-ARG AWSCLI_VER=2.5.8
-ARG IAM_AUTH_VER=0.5.7
+ARG KUBECTL_VER=1.24.3
+ARG EKSCTL_VER=0.105.0
+ARG AWSCLI_VER=2.7.15
+ARG IAM_AUTH_VER=0.5.9
 
 # Installing kubectl
 RUN curl -sL https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VER}/bin/linux/${TARGETARCH}/kubectl \
