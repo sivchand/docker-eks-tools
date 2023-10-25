@@ -6,13 +6,13 @@ ARG KUBECTL_VER=1.24.3
 ARG EKSCTL_VER=0.105.0
 ARG AWSCLI_VER=2.7.15
 ARG IAM_AUTH_VER=0.5.9
-
+ARG FLUXCD_VER=0.36.0
 # Installing kubectl
 RUN curl -sL https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VER}/bin/linux/${TARGETARCH}/kubectl \
     -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
 
 # Installing eksctl 
-RUN curl -sL https://github.com/weaveworks/eksctl/releases/download/v${EKSCTL_VER}/eksctl_Linux_${TARGETARCH}.tar.gz | \
+RUN curl -sL https://github.com/eksctl-io/eksctl/releases/download/v${EKSCTL_VER}/eksctl_Linux_${TARGETARCH}.tar.gz | \
     tar xz -C /usr/local/bin 
 
 # Installing awscli
@@ -23,3 +23,7 @@ RUN if [ "$TARGETARCH" = "amd64" ]; then ARCHITECTURE=x86_64; elif [ "$TARGETARC
 # Installing aws iam authenticator
 RUN curl -sL https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v${IAM_AUTH_VER}/aws-iam-authenticator_${IAM_AUTH_VER}_linux_${TARGETARCH} \
     -o /usr/local/bin/aws-iam-authenticator && chmod +x /usr/local/bin/aws-iam-authenticator
+
+# Installing FluxCD
+RUN curl -sL https://github.com/fluxcd/flux2/releases/download/v${FLUXCD_VER}/flux_${FLUXCD_VER}_linux_${TARGETARCH}.tar.gz | \
+    tar xz -C /usr/local/bin
