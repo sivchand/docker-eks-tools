@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM python:3.9 AS build-base
 
 ARG TARGETARCH
 
@@ -7,9 +7,6 @@ ARG EKSCTL_VER=0.105.0
 ARG AWSCLI_VER=2.7.15
 ARG IAM_AUTH_VER=0.5.9
 ARG FLUXCD_VER=0.36.0
-# Installing kubectl
-RUN curl -sL https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VER}/bin/linux/${TARGETARCH}/kubectl \
-    -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
 
 # Installing eksctl 
 RUN curl -sL https://github.com/eksctl-io/eksctl/releases/download/v${EKSCTL_VER}/eksctl_Linux_${TARGETARCH}.tar.gz | \
@@ -27,3 +24,10 @@ RUN curl -sL https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/d
 # Installing FluxCD
 RUN curl -sL https://github.com/fluxcd/flux2/releases/download/v${FLUXCD_VER}/flux_${FLUXCD_VER}_linux_${TARGETARCH}.tar.gz | \
     tar xz -C /usr/local/bin
+
+# Installing kubectl
+RUN curl -sL https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VER}/bin/linux/${TARGETARCH}/kubectl \
+    -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
+
+FROM python:3.9 AS build
+COPY --from=build-base --link /usr/local /usr/local
