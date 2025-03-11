@@ -1,4 +1,4 @@
-FROM python:3.9 AS build-base
+FROM python:3.10 AS build-base
 
 ARG TARGETARCH
 
@@ -26,8 +26,9 @@ RUN curl -sL https://github.com/fluxcd/flux2/releases/download/v${FLUXCD_VER}/fl
     tar xz -C /usr/local/bin
 
 # Installing kubectl
-RUN curl -sL https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VER}/bin/linux/${TARGETARCH}/kubectl \
+RUN curl -sL https://dl.k8s.io/release/v${KUBECTL_VER}/bin/linux/${TARGETARCH}/kubectl \
     -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
 
-FROM python:3.9 AS build
+FROM python:3.10 AS build
 COPY --from=build-base --link /usr/local /usr/local
+RUN kubectl version --client=true && aws-iam-authenticator version && flux --version && aws --version && eksctl version
