@@ -1,4 +1,4 @@
-FROM python:3.10 AS build-base
+FROM python:3.13 AS build-base
 
 ARG TARGETARCH
 
@@ -7,6 +7,7 @@ ARG EKSCTL_VER=0.105.0
 ARG AWSCLI_VER=2.7.15
 ARG IAM_AUTH_VER=0.5.9
 ARG FLUXCD_VER=0.36.0
+ARG KAPP_VER=0.65.3
 
 # Installing eksctl 
 RUN curl -sL https://github.com/eksctl-io/eksctl/releases/download/v${EKSCTL_VER}/eksctl_Linux_${TARGETARCH}.tar.gz | \
@@ -21,6 +22,10 @@ RUN if [ "$TARGETARCH" = "amd64" ]; then ARCHITECTURE=x86_64; elif [ "$TARGETARC
 RUN curl -sL https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v${IAM_AUTH_VER}/aws-iam-authenticator_${IAM_AUTH_VER}_linux_${TARGETARCH} \
     -o /usr/local/bin/aws-iam-authenticator && chmod +x /usr/local/bin/aws-iam-authenticator
 
+# Installing kapp
+RUN curl -sL https://github.com/carvel-dev/kapp/releases/download/v${KAPP_VER}/kapp-linux-${TARGETARCH} \
+    -o /usr/local/bin/kapp && chmod +x /usr/local/bin/kapp
+
 # Installing FluxCD
 RUN curl -sL https://github.com/fluxcd/flux2/releases/download/v${FLUXCD_VER}/flux_${FLUXCD_VER}_linux_${TARGETARCH}.tar.gz | \
     tar xz -C /usr/local/bin
@@ -29,6 +34,6 @@ RUN curl -sL https://github.com/fluxcd/flux2/releases/download/v${FLUXCD_VER}/fl
 RUN curl -sL https://dl.k8s.io/release/v${KUBECTL_VER}/bin/linux/${TARGETARCH}/kubectl \
     -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
 
-FROM python:3.10 AS build
+FROM python:3.13 AS build
 COPY --from=build-base --link /usr/local /usr/local
-RUN kubectl version --client=true && aws-iam-authenticator version && flux --version && aws --version && eksctl version
+RUN kubectl version --client=true && aws-iam-authenticator version && flux --version && aws --version && eksctl version && kapp --version
